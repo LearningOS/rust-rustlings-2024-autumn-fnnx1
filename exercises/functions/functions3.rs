@@ -5,10 +5,10 @@
 
 
 fn main() {
-    call_me(3);
+    call_me(1,1);
 }
 
-fn call_me(num: u32) {
+fn call_me(num: u32, i: i32) {
     for i in 0..num {
         println!("Ring! Call number {}", i + 1);
     }
