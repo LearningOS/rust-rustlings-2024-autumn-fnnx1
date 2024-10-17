@@ -19,16 +19,19 @@
 // Execute `rustlings hint errors2` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
 
 use std::num::ParseIntError;
 
 pub fn total_cost(item_quantity: &str) -> Result<i32, ParseIntError> {
     let processing_fee = 1;
     let cost_per_item = 5;
-    let qty = item_quantity.parse::<i32>();
+    let qty:Result<i32, ParseIntError> = item_quantity.parse::<i32>();
 
-    Ok(qty * cost_per_item + processing_fee)
+    match qty {
+    Ok(num) => return Ok(num * cost_per_item + processing_fee),
+    Err(_) => "invalid digit found in string",
+    };
+    qty
 }
 
 #[cfg(test)]
@@ -42,7 +45,7 @@ mod tests {
 
     #[test]
     fn item_quantity_is_an_invalid_number() {
-        assert_eq!(
+        let var_name = assert_eq!(
             total_cost("beep boop").unwrap_err().to_string(),
             "invalid digit found in string"
         );
