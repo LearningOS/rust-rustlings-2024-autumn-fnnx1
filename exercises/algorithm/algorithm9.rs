@@ -1,4 +1,5 @@
 /*
+    堆
 	heap
 	This question requires you to implement a binary heap function
 */
@@ -12,6 +13,7 @@ where
 {
     count: usize,
     items: Vec<T>,
+    // 比较闭包函数，根据该函数来确定谁在堆顶
     comparator: fn(&T, &T) -> bool,
 }
 
@@ -36,43 +38,43 @@ where
     }
 
     pub fn add(&mut self, value: T) {
-        self.items.push(value);
+        self.items.push(value); // 插入到树的最后面
         self.count += 1;
         self.sift_up(self.count);
     }
 
-
+    // 上滤操作，将新插入的元素上浮到合适的位置
     fn sift_up(&mut self, mut idx: usize) {
-
+        // 保证 idx 不是根节点，比较当前节点以及父节点
         while idx > 1 && ((self.comparator)(&self.items[idx], &self.items[self.parent_idx(idx)])) {
-
+            // 比较成功
             let parent_idx = self.parent_idx(idx);
             self.items.swap(idx, parent_idx);
             idx = parent_idx;
         }
     }
-
+    // 弹出堆顶
     pub fn pop(&mut self) -> Option<T> {
         if self.is_empty() {
             return None;
         }
         let top = self.items[1].clone();
-
+        // 交换第一个和最后一个
         self.items.swap(1, self.count);
-
+        // 移除最后一个
         self.items.pop();
         self.count -= 1;
-
+        // 下滤操作
         if !self.is_empty() {
-            self.sift_down(1); 
+            self.sift_down(1); // 调整堆的结构
         }
         Some(top)
     }
 
     fn sift_down(&mut self, mut idx: usize) {
-
+        // 当当前节点有孩子节点时
         while self.children_present(idx) {
-
+            // 交换子节点中较小的
             let smallest = self.smallest_child_idx(idx);
             if (self.comparator)(&self.items[smallest], &self.items[idx]) {
                 self.items.swap(smallest, idx);
@@ -83,10 +85,12 @@ where
         }
     }
 
+    // 父节点，当前节点 / 2
     fn parent_idx(&self, idx: usize) -> usize {
         idx / 2
     }
 
+    // 用来找该节点是否有孩子节点
     fn children_present(&self, idx: usize) -> bool {
         self.left_child_idx(idx) <= self.count
     }
@@ -114,12 +118,12 @@ impl<T> Heap<T>
 where
     T: Default + Ord + Clone,
 {
-    /// Create a new MinHeap 
+    /// Create a new MinHeap 小根堆
     pub fn new_min() -> Self {
         Self::new(|a, b| a < b)
     }
 
-    /// Create a new MaxHeap 
+    /// Create a new MaxHeap 大根堆
     pub fn new_max() -> Self {
         Self::new(|a, b| a > b)
     }

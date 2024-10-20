@@ -1,4 +1,5 @@
 /*
+    合并有序链表
     single linked list merge
     This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
@@ -28,7 +29,7 @@ struct LinkedList<T> {
     end: Option<NonNull<Node<T>>>,
 }
 
-
+// 给 LinkedList 实现 Default trait，可以直接使用 LinkedList::default() 来创建链表
 impl<T> Default for LinkedList<T> {
     fn default() -> Self {
         Self::new()
@@ -71,30 +72,31 @@ impl<T> LinkedList<T> {
     }
     pub fn merge(list_a: LinkedList<T>, list_b: LinkedList<T>) -> Self
         where T: Ord + Copy 
-
+        // 约束范型T是实现了Ord trait的，可比较，并且可在栈上复制（因为我们不能 move，而且下面 tests 给的是 i32）
     {
-
+        // 两个链表的开始节点
         let (mut node_a, mut node_b) = (list_a.start, list_b.start);
         let mut merged_list = LinkedList::default();
-       
+        // 如果 node_a 和 node_b 不是 None，那么就会继续循环
         while let (Some(a), Some(b)) = (node_a, node_b) {
-
+            // 通过指针取出元素
             let val_a = unsafe { &(*a.as_ptr()).val };
             let val_b = unsafe { &(*b.as_ptr()).val };
             if val_a <= val_b {
-                merged_list.add(*val_a); 
-                node_a = unsafe { (*a.as_ptr()).next }; 
+                merged_list.add(*val_a); // 向合并的链表添加元素 val_a
+                node_a = unsafe { (*a.as_ptr()).next }; // 更新 node_a
             } else {
-                merged_list.add(*val_b); 
-                node_b = unsafe { (*b.as_ptr()).next }; 
+                merged_list.add(*val_b); // 向合并的链表添加元素 val_b
+                node_b = unsafe { (*b.as_ptr()).next }; // 更新 node_b
             }
         }
-
+        // 如果 list_a 有剩余元素，向 merged_list 添加剩下的元素
         while let Some(a) = node_a {
             let val_a = unsafe { &(*a.as_ptr()).val };
             merged_list.add(*val_a);
             node_a = unsafe { (*a.as_ptr()).next };
         }
+        // 如果 list_b 有剩余元素，向 merged_list 添加剩下的元素
         while let Some(b) = node_b {
             let val_b = unsafe { &(*b.as_ptr()).val };
             merged_list.add(*val_b);
@@ -104,7 +106,7 @@ impl<T> LinkedList<T> {
     }
 }
 
-
+// 实现 Display trait，便于可以直接 print
 impl<T> Display for LinkedList<T>
 where
     T: Display,
