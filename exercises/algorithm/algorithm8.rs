@@ -1,7 +1,5 @@
 /*
-    队列
     queue
-    用两个队列来实现栈
     This question requires you to use queues to implement the functionality of the stac
 */
 
@@ -16,11 +14,9 @@ impl<T> Queue<T> {
             elements: Vec::new(),
         }
     }
-    // 入队，放到最后面
     pub fn enqueue(&mut self, value: T) {
         self.elements.push(value)
     }
-    // 出队，移除最前面的元素
     pub fn dequeue(&mut self) -> Result<T, &str> {
         if !self.elements.is_empty() {
             Ok(self.elements.remove(0usize))
@@ -54,14 +50,14 @@ impl<T> Default for Queue<T> {
 }
 
 pub struct myStack<T> {
-    sign: bool, // true 表示元素都在 q1 队列，false 表示元素都在 q2 队列
+    sign: bool, 
     q1: Queue<T>,
     q2: Queue<T>,
 }
 impl<T> myStack<T> {
     pub fn new() -> Self {
         Self {
-            sign: true, // 初始为 true，表示 q1
+            sign: true, 
             q1: Queue::<T>::new(),
             q2: Queue::<T>::new(),
         }
@@ -78,12 +74,10 @@ impl<T> myStack<T> {
         }
         match self.sign {
             true => {
-                // 把 q1 前 n-1 个元素移动到 q2
                 while self.q1.size() > 1 {
                     let value = self.q1.dequeue().unwrap();
                     self.q2.enqueue(value);
                 }
-                // 交换，剩下的 q1 的最后一个元素就是栈顶
                 self.sign = false;
                 self.q1.dequeue()
             }

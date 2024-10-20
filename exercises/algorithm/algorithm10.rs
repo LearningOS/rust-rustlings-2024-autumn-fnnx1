@@ -1,5 +1,4 @@
 /*
-    图
     graph
     This problem requires you to implement a basic graph function
 */
@@ -34,10 +33,10 @@ impl Graph for UndirectedGraph {
         self.add_node(edge.1);
 
         self.adjacency_table_mutable()
-            .get_mut(edge.0) // 获取该节点的可变引用
+            .get_mut(edge.0) 
             .unwrap()
-            .push((edge.1.to_string(), edge.2)); // 添加边
-                                                 // 无向图，添加两条边
+            .push((edge.1.to_string(), edge.2)); 
+                                                
         self.adjacency_table_mutable()
             .get_mut(edge.1)
             .unwrap()
@@ -46,33 +45,19 @@ impl Graph for UndirectedGraph {
 }
 pub trait Graph {
     fn new() -> Self;
-    // 返回可变邻接表
     fn adjacency_table_mutable(&mut self) -> &mut HashMap<String, Vec<(String, i32)>>;
-    // 返回不可变邻接表
     fn adjacency_table(&self) -> &HashMap<String, Vec<(String, i32)>>;
-    // 添加一个节点
     fn add_node(&mut self, node: &str) -> bool {
-        // // 看一下该节点是否已经存在
-        // if self.adjacency_table_mutable().contains_key(node) {
-        //     false
-        // } else {
-        //     self.adjacency_table_mutable()
-        //         .insert(node.to_string(), Vec::new());
-        //     true
-        // }
-        // entry 写法
         self.adjacency_table_mutable()
-            .entry(node.to_owned()) // 如果节点不存在，则插入 Vec::new
-            .or_insert_with(Vec::new) // 返回了该节点的 Vector
-            .is_empty() // 如果节点是刚刚插入的，则返回的 Vector 是空的，
-                        // 返回 true，如果节点之前就有，返回的 Vector 不是空的，返回 false
-                        // 但是本题没有用到这个返回值。
+            .entry(node.to_owned()) 
+            .or_insert_with(Vec::new) 
+            .is_empty()
     }
     fn add_edge(&mut self, edge: (&str, &str, i32)) {
         self.adjacency_table_mutable()
-            .get_mut(edge.0) // 获取该节点的可变引用
+            .get_mut(edge.0) 
             .unwrap()
-            .push((edge.1.to_string(), edge.2)); // 添加边
+            .push((edge.1.to_string(), edge.2)); 
     }
     fn contains(&self, node: &str) -> bool {
         self.adjacency_table().get(node).is_some()
