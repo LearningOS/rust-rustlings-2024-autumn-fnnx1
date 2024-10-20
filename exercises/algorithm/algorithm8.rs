@@ -1,8 +1,9 @@
 /*
-	queue
-	This question requires you to use queues to implement the functionality of the stac
+    队列
+    queue
+    用两个队列来实现栈
+    This question requires you to use queues to implement the functionality of the stac
 */
-// I AM NOT DONE
 
 #[derive(Debug)]
 pub struct Queue<T> {
@@ -15,11 +16,11 @@ impl<T> Queue<T> {
             elements: Vec::new(),
         }
     }
-
+    // 入队，放到最后面
     pub fn enqueue(&mut self, value: T) {
         self.elements.push(value)
     }
-
+    // 出队，移除最前面的元素
     pub fn dequeue(&mut self) -> Result<T, &str> {
         if !self.elements.is_empty() {
             Ok(self.elements.remove(0usize))
@@ -52,41 +53,65 @@ impl<T> Default for Queue<T> {
     }
 }
 
-pub struct myStack<T>
-{
-	//TODO
-	q1:Queue<T>,
-	q2:Queue<T>
+pub struct myStack<T> {
+    sign: bool, // true 表示元素都在 q1 队列，false 表示元素都在 q2 队列
+    q1: Queue<T>,
+    q2: Queue<T>,
 }
 impl<T> myStack<T> {
     pub fn new() -> Self {
         Self {
-			//TODO
-			q1:Queue::<T>::new(),
-			q2:Queue::<T>::new()
+            sign: true, // 初始为 true，表示 q1
+            q1: Queue::<T>::new(),
+            q2: Queue::<T>::new(),
         }
     }
     pub fn push(&mut self, elem: T) {
-        //TODO
+        match self.sign {
+            true => self.q1.enqueue(elem),
+            false => self.q2.enqueue(elem),
+        }
     }
     pub fn pop(&mut self) -> Result<T, &str> {
-        //TODO
-		Err("Stack is empty")
+        if self.is_empty() {
+            return Err("Stack is empty");
+        }
+        match self.sign {
+            true => {
+                // 把 q1 前 n-1 个元素移动到 q2
+                while self.q1.size() > 1 {
+                    let value = self.q1.dequeue().unwrap();
+                    self.q2.enqueue(value);
+                }
+                // 交换，剩下的 q1 的最后一个元素就是栈顶
+                self.sign = false;
+                self.q1.dequeue()
+            }
+            false => {
+                while self.q2.size() > 1 {
+                    let value = self.q2.dequeue().unwrap();
+                    self.q1.enqueue(value);
+                }
+                self.sign = true;
+                self.q2.dequeue()
+            }
+        }
     }
     pub fn is_empty(&self) -> bool {
-		//TODO
-        true
+        self.q1.is_empty() && self.q2.is_empty()
     }
 }
 
+fn main() {}
+
 #[cfg(test)]
 mod tests {
-	use super::*;
-	
-	#[test]
-	fn test_queue(){
-		let mut s = myStack::<i32>::new();
-		assert_eq!(s.pop(), Err("Stack is empty"));
+    use super::*;
+
+    #[test]
+    fn test_queue() {
+        let mut s = myStack::<i32>::new();
+        assert_eq!(s.pop(), Err("Stack is empty"));
         s.push(1);
         s.push(2);
         s.push(3);
@@ -100,5 +125,5 @@ mod tests {
         assert_eq!(s.pop(), Ok(1));
         assert_eq!(s.pop(), Err("Stack is empty"));
         assert_eq!(s.is_empty(), true);
-	}
+    }
 }

@@ -1,9 +1,9 @@
 /*
+    广度优先搜索
 	bfs
 	This problem requires you to implement a basic BFS algorithm
 */
 
-//I AM NOT DONE
 use std::collections::VecDeque;
 
 // Define a graph
@@ -14,26 +14,43 @@ struct Graph {
 impl Graph {
     // Create a new graph with n vertices
     fn new(n: usize) -> Self {
-        Graph {
+        // 创建 n * n 的二维图
+        Graph { 
             adj: vec![vec![]; n],
         }
     }
 
     // Add an edge to the graph
     fn add_edge(&mut self, src: usize, dest: usize) {
+        // 无向图，添加两条边
         self.adj[src].push(dest); 
         self.adj[dest].push(src); 
     }
 
     // Perform a breadth-first search on the graph, return the order of visited nodes
     fn bfs_with_return(&self, start: usize) -> Vec<usize> {
-        
-		//TODO
-
+        let mut visited = vec![false; self.adj.len()]; // 记录节点是否访问过
+        let mut queue = VecDeque::new(); // 队列
         let mut visit_order = vec![];
+        // 将起始节点加入队列，标记为已访问
+        visited[start] = true;
+        queue.push_back(start);
+        // 开始 BFS 遍历
+        while let Some(node) = queue.pop_front() {
+            visit_order.push(node); // 记录访问顺序
+            // 遍历当前节点的相邻节点
+            for &neighbor in &self.adj[node] {
+                if !visited[neighbor] {
+                    queue.push_back(neighbor);
+                    visited[neighbor] = true; // 标记已经访问
+                }
+            }
+        }
         visit_order
     }
 }
+
+fn main() {}
 
 
 #[cfg(test)]

@@ -1,12 +1,11 @@
 /*
+    双向链表反转
 	double linked list reverse
 	This problem requires you to reverse a doubly linked list
 */
-// I AM NOT DONE
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
-use std::vec::*;
 
 #[derive(Debug)]
 struct Node<T> {
@@ -24,6 +23,7 @@ impl<T> Node<T> {
         }
     }
 }
+
 #[derive(Debug)]
 struct LinkedList<T> {
     length: u32,
@@ -72,8 +72,23 @@ impl<T> LinkedList<T> {
             },
         }
     }
+
 	pub fn reverse(&mut self){
-		// TODO
+		let mut cur = self.start; // 当前指针
+        let mut prev = None;
+        // 交换每一个节点的 prev 和 next 指针
+        while let Some(mut cur_ptr) = cur {
+            let cur_node = unsafe { cur_ptr.as_mut() };
+            let next = cur_node.next;
+            // 交换 next 和 prev
+            cur_node.next = prev;
+            cur_node.prev = next;
+            // 更新 prev 和 cur
+            prev = cur; // 上一个变成现在的
+            cur = next; // 现在的变成下一个
+        }
+        // 交换链表的 start 和 end (这也是一个 unsafe 操作，通过 std::mem::swap() 包装)
+        std::mem::swap(&mut self.start, &mut self.end);
 	}
 }
 
@@ -100,6 +115,8 @@ where
         }
     }
 }
+
+fn main() {}
 
 #[cfg(test)]
 mod tests {
